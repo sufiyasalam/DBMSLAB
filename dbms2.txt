@@ -1,0 +1,157 @@
+# mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> use ORDERS;
+Database changed
+
+MariaDB [ORDERS]> desc SALESMAN;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Salesman_id | int(11)     | NO   | PRI | NULL    |       |
+| Name        | varchar(25) | NO   |     | NULL    |       |
+| City        | varchar(15) | NO   |     | NULL    |       |
+| Commission  | float       | NO   |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.037 sec)
+
+MariaDB [ORDERS]> desc CUSTOMER;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Customer_id | int(11)     | NO   | PRI | NULL    |       |
+| Cust_Name   | varchar(25) | NO   |     | NULL    |       |
+| City        | varchar(15) | NO   |     | NULL    |       |
+| Grade       | int(11)     | NO   |     | NULL    |       |
+| Salesman_id | int(11)     | YES  | MUL | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+5 rows in set (0.032 sec)
+
+MariaDB [ORDERS]> desc ORDERS;
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| Ord_No       | int(11) | NO   | PRI | NULL    |       |
+| Purchase_Amt | int(11) | NO   |     | NULL    |       |
+| Ord_Date     | date    | NO   |     | NULL    |       |
+| Customer_id  | int(11) | YES  | MUL | NULL    |       |
+| Salesman_id  | int(11) | YES  | MUL | NULL    |       |
++--------------+---------+------+-----+---------+-------+
+5 rows in set (0.029 sec)
+
+MariaDB [ORDERS]> select * from SALESMAN;
++-------------+------+-----------+------------+
+| Salesman_id | Name | City      | Commission |
++-------------+------+-----------+------------+
+|        1000 | Jack | Mysore    |         10 |
+|        1001 | Evan | Bangalore |         20 |
+|        1002 | Noah | Sydney    |         30 |
+|        1003 | Ryan | Madrid    |         40 |
++-------------+------+-----------+------------+
+4 rows in set (0.001 sec)
+
+MariaDB [ORDERS]> select * from CUSTOMER;
++-------------+-----------+-----------+-------+-------------+
+| Customer_id | Cust_Name | City      | Grade | Salesman_id |
++-------------+-----------+-----------+-------+-------------+
+|         500 | Ayra      | Kashmir   |     2 |        1000 |
+|         501 | Emma      | Cochin    |     4 |        1001 |
+|         502 | Finn      | Bangalore |     6 |        1001 |
+|         503 | Ross      | Bangalore |     8 |        1001 |
+|         504 | Dale      | Nilgiri   |    10 |        1002 |
++-------------+-----------+-----------+-------+-------------+
+5 rows in set (0.001 sec)
+
+MariaDB [ORDERS]> select * from ORDERS;
++--------+--------------+------------+-------------+-------------+
+| Ord_No | Purchase_Amt | Ord_Date   | Customer_id | Salesman_id |
++--------+--------------+------------+-------------+-------------+
+|   2001 |         5500 | 2021-09-01 |         502 |        1001 |
+|   2002 |         6500 | 2021-02-07 |         503 |        1002 |
+|   2003 |         7500 | 2021-12-15 |         504 |        1003 |
++--------+--------------+------------+-------------+-------------+
+3 rows in set (0.001 sec)
+
+QUERY 1:
+MariaDB [ORDERS]> SELECT COUNT(Customer_ID) FROM CUSTOMER
+    -> WHERE GRADE>(
+    -> SELECT AVG(GRADE) FROM CUSTOMER WHERE City='Bangalore');
++--------------------+
+| COUNT(Customer_ID) |
++--------------------+
+|                  2 |
++--------------------+
+1 row in set (0.045 sec)
+
+QUERY 2:
+MariaDB [ORDERS]> SELECT Name,COUNT(Customer_ID) AS Num_Customers
+    -> FROM SALESMAN JOIN CUSTOMER ON SALESMAN.Salesman_ID=CUSTOMER.Salesman_ID
+    -> GROUP BY NAME HAVING COUNT(Customer_ID)>1;
++------+---------------+
+| Name | Num_Customers |
++------+---------------+
+| Evan |             3 |
++------+---------------+
+1 row in set (0.041 sec)
+
+QUERY 3:
+MariaDB [ORDERS]> SELECT s.salesman_id, s.name, s.city, 'Has customers' AS status
+    -> FROM SALESMAN s
+    -> INNER JOIN CUSTOMER c ON s.city = c.city
+    -> UNION
+    -> SELECT s.salesman_id, s.name, s.city, 'No customers' AS status
+    -> FROM SALESMAN s
+    -> WHERE NOT EXISTS (
+    -> SELECT 1 FROM CUSTOMER c WHERE s.city = c.city
+    -> );
++-------------+------+-----------+---------------+
+| salesman_id | name | city      | status        |
++-------------+------+-----------+---------------+
+|        1001 | Evan | Bangalore | Has customers |
+|        1000 | Jack | Mysore    | No customers  |
+|        1002 | Noah | Sydney    | No customers  |
+|        1003 | Ryan | Madrid    | No customers  |
++-------------+------+-----------+---------------+
+4 rows in set (0.041 sec)
+
+QUERY 4:
+MariaDB [ORDERS]> CREATE VIEW HighOrder AS
+    -> SELECT Salesman_id, Customer_id, Purchase_Amt, Ord_Date
+    -> FROM ORDERS X
+    -> WHERE Purchase_Amt = (
+    -> SELECT MAX(Purchase_Amt)
+    -> FROM ORDERS Y
+    -> WHERE X.Ord_Date = Y.Ord_Date
+    -> );
+Query OK, 0 rows affected (0.049 sec)
+
+MariaDB [ORDERS]> select * from HighOrder;
++-------------+-------------+--------------+------------+
+| Salesman_id | Customer_id | Purchase_Amt | Ord_Date   |
++-------------+-------------+--------------+------------+
+|        1000 |         501 |         4500 | 2021-12-19 |
+|        1001 |         502 |         5500 | 2021-09-01 |
+|        1002 |         503 |         6500 | 2021-02-07 |
+|        1003 |         504 |         7500 | 2021-12-15 |
++-------------+-------------+--------------+------------+
+4 rows in set (0.041 sec)
+
+QUERY 5:
+MariaDB [ORDERS]> DELETE FROM ORDERS WHERE Salesman_id = 1000;
+Query OK, 1 row affected (0.042 sec)
+
+MariaDB [ORDERS]> select * from ORDERS;
++--------+--------------+------------+-------------+-------------+
+| Ord_No | Purchase_Amt | Ord_Date   | Customer_id | Salesman_id |
++--------+--------------+------------+-------------+-------------+
+|   2001 |         5500 | 2021-09-01 |         502 |        1001 |
+|   2002 |         6500 | 2021-02-07 |         503 |        1002 |
+|   2003 |         7500 | 2021-12-15 |         504 |        1003 |
++--------+--------------+------------+-------------+-------------+
+3 rows in set (0.001 sec)
