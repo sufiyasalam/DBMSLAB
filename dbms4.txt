@@ -1,0 +1,224 @@
+MariaDB [(none)]> use COLLEGE;
+Database changed
+MariaDB [COLLEGE]> show tables;
++-------------------+
+| Tables_in_college |
++-------------------+
+| class             |
+| course            |
+| iamarks           |
+| semsec            |
+| student           |
++-------------------+
+5 rows in set (0.001 sec)
+
+MariaDB [COLLEGE]> desc STUDENT;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| USN     | char(10)    | NO   | PRI | NULL    |       |
+| SName   | varchar(25) | NO   |     | NULL    |       |
+| Address | varchar(30) | NO   |     | NULL    |       |
+| Phone   | varchar(10) | YES  |     | NULL    |       |
+| Gender  | char(1)     | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+5 rows in set (0.027 sec)
+
+MariaDB [COLLEGE]> desc SEMSEC;
++-------+------------+------+-----+---------+-------+
+| Field | Type       | Null | Key | Default | Extra |
++-------+------------+------+-----+---------+-------+
+| SSID  | int(11)    | NO   | PRI | NULL    |       |
+| Sem   | varchar(5) | YES  |     | NULL    |       |
+| Sec   | varchar(5) | YES  |     | NULL    |       |
++-------+------------+------+-----+---------+-------+
+3 rows in set (0.034 sec)
+
+MariaDB [COLLEGE]> desc CLASS;
++-------+----------+------+-----+---------+-------+
+| Field | Type     | Null | Key | Default | Extra |
++-------+----------+------+-----+---------+-------+
+| USN   | char(10) | NO   | PRI | NULL    |       |
+| SSID  | int(11)  | YES  | MUL | NULL    |       |
++-------+----------+------+-----+---------+-------+
+2 rows in set (0.034 sec)
+
+MariaDB [COLLEGE]> desc COURSE;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| Subcode | char(7)     | NO   | PRI | NULL    |       |
+| Title   | varchar(20) | YES  |     | NULL    |       |
+| Sem     | int(11)     | YES  |     | NULL    |       |
+| CREDITS | int(11)     | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+4 rows in set (0.031 sec)
+
+MariaDB [COLLEGE]> desc IAMARKS;
++---------+----------+------+-----+---------+-------+
+| Field   | Type     | Null | Key | Default | Extra |
++---------+----------+------+-----+---------+-------+
+| USN     | char(10) | NO   | PRI | NULL    |       |
+| Subcode | char(7)  | NO   | PRI | NULL    |       |
+| SSID    | int(11)  | NO   | PRI | NULL    |       |
+| Test1   | int(11)  | NO   |     | NULL    |       |
+| Test2   | int(11)  | NO   |     | NULL    |       |
+| Test3   | int(11)  | NO   |     | NULL    |       |
+| FinalIA | double   | YES  |     | NULL    |       |
++---------+----------+------+-----+---------+-------+
+7 rows in set (0.037 sec)
+
+MariaDB [college]> select * from student;
++------------+---------+--------------+------------+--------+
+| USN        | SName   | Address      | Phone      | Gender |
++------------+---------+--------------+------------+--------+
+| 1BI15CS101 | John    | New York     | 1234567890 | M      |
+| 1BI15CS102 | Emma    | Los Angeles  | 2345678901 | F      |
+| 1BI15CS103 | David   | Chicago      | 3456789012 | M      |
+| 1BI15CS104 | Olivia  | Houston      | 4567890123 | F      |
+| 1BI15CS105 | Michael | Philadelphia | 5678901234 | M      |
++------------+---------+--------------+------------+--------+
+5 rows in set (0.001 sec)
+
+
+MariaDB [college]> select * from SEMSEC;
++------+------+------+
+| SSID | Sem  | Sec  |
++------+------+------+
+|    1 | 4    | C    |
+|    2 | 8    | A    |
+|    3 | 8    | B    |
+|    4 | 8    | C    |
++------+------+------+
+4 rows in set (0.001 sec)
+
+MariaDB [college]> select * from CLASS;
++------------+------+
+| USN        | SSID |
++------------+------+
+| 1BI15CS101 |    1 |
+| 1BI15CS105 |    1 |
+| 1BI15CS102 |    2 |
+| 1BI15CS103 |    3 |
+| 1BI15CS104 |    4 |
++------------+------+
+5 rows in set (0.001 sec)
+
+MariaDB [college]> select * from COURSE;
++---------+----------------+------+---------+
+| Subcode | Title          | Sem  | CREDITS |
++---------+----------------+------+---------+
+| 21CS41  | MAT            |    4 |       3 |
+| 21CS81  | DataScience    |    8 |       4 |
+| 21CS82  | CloudComputing |    8 |       4 |
+| 21CS83  | CyberSecurity  |    8 |       4 |
+| 21CS84  | AIML           |    8 |       4 |
++---------+----------------+------+---------+
+5 rows in set (0.001 sec)
+
+MariaDB [college]> select * from IAMARKS;
++------------+---------+------+-------+-------+-------+---------+
+| USN        | Subcode | SSID | Test1 | Test2 | Test3 | FinalIA |
++------------+---------+------+-------+-------+-------+---------+
+| 1BI15CS101 | 21CS41  |    1 |    18 |    19 |    20 |    19.5 |
+| 1BI15CS102 | 21CS81  |    2 |    15 |    16 |    14 |    15.5 |
+| 1BI15CS103 | 21CS82  |    3 |    11 |    10 |    12 |    11.5 |
+| 1BI15CS104 | 21CS83  |    4 |    20 |    19 |    18 |    19.5 |
+| 1BI15CS105 | 21CS84  |    1 |    14 |    15 |    16 |    15.5 |
++------------+---------+------+-------+-------+-------+---------+
+5 rows in set (0.001 sec)
+
+QUERY 1: List all the student details studying in fourth semester ‘C’ section.
+MariaDB [college]> SELECT STUDENT.*
+    -> FROM STUDENT
+    -> JOIN CLASS ON STUDENT.USN = CLASS.USN
+    -> JOIN SEMSEC ON CLASS.SSID = SEMSEC.SSID
+    -> WHERE SEMSEC.Sem = 4 AND SEMSEC.Sec = 'C';
++------------+---------+--------------+------------+--------+
+| USN        | SName   | Address      | Phone      | Gender |
++------------+---------+--------------+------------+--------+
+| 1BI15CS101 | John    | New York     | 1234567890 | M      |
+| 1BI15CS105 | Michael | Philadelphia | 5678901234 | M      |
++------------+---------+--------------+------------+--------+
+2 rows in set (0.002 sec)
+
+QUERY 2: To compute the total number of male and female students in each semester and in each section.
+MariaDB [college]> SELECT SEMSEC.Sem, SEMSEC.Sec, STUDENT.Gender, COUNT(*)
+    -> FROM STUDENT
+    -> JOIN CLASS ON STUDENT.USN = CLASS.USN
+    -> JOIN SEMSEC ON CLASS.SSID = SEMSEC.SSID
+    -> GROUP BY SEMSEC.Sem, SEMSEC.Sec, STUDENT.Gender;
++------+------+--------+----------+
+| Sem  | Sec  | Gender | COUNT(*) |
++------+------+--------+----------+
+| 4    | C    | M      |        2 |
+| 8    | A    | F      |        1 |
+| 8    | B    | M      |        1 |
+| 8    | C    | F      |        1 |
++------+------+--------+----------+
+4 rows in set (0.002 sec)
+
+QUERY 3:Create a view of Test1 marks of student USN ‘1BI15CS101’ in all subjects.
+
+MariaDB [college]> CREATE VIEW StudentMarks AS
+    -> SELECT IAMARKS.Subcode, IAMARKS.Test1
+    -> FROM IAMARKS
+    -> WHERE IAMARKS.USN = '1BI15CS101';
+Query OK, 0 rows affected (0.048 sec)
+
+MariaDB [college]> SELECT * FROM StudentMarks;
++---------+-------+
+| Subcode | Test1 |
++---------+-------+
+| 21CS41  |    18 |
++---------+-------+
+1 row in set (0.003 sec)
+
+QUERY 4: Calculate the FinalIA (average of best two test marks) and update the corresponding 
+table for all students.
+
+MariaDB [college]> UPDATE IAMARKS
+    -> SET FinalIA = GREATEST(Test1+Test2, Test2+Test3,Test1+Test3)/2;
+Query OK, 0 rows affected (0.001 sec)
+Rows matched: 5  Changed: 0  Warnings: 0
+
+MariaDB [college]>  select * from IAMARKS;
++------------+---------+------+-------+-------+-------+---------+
+| USN        | Subcode | SSID | Test1 | Test2 | Test3 | FinalIA |
++------------+---------+------+-------+-------+-------+---------+
+| 1BI15CS101 | 21CS41  |    1 |    18 |    19 |    20 |    19.5 |
+| 1BI15CS102 | 21CS81  |    2 |    15 |    16 |    14 |    15.5 |
+| 1BI15CS103 | 21CS82  |    3 |    11 |    10 |    12 |    11.5 |
+| 1BI15CS104 | 21CS83  |    4 |    20 |    19 |    18 |    19.5 |
+| 1BI15CS105 | 21CS84  |    1 |    14 |    15 |    16 |    15.5 |
++------------+---------+------+-------+-------+-------+---------+
+5 rows in set (0.001 sec)
+
+QUERY 5: Categorize students based on the following criterion: 
+If FinalIA = 17 to 20 then CAT =
+‘Outstanding’ If FinalIA = 12 to 16 then CAT
+= ‘Average’
+If FinalIA< 12 then CAT = ‘Weak’
+Give these details only for 8
+th
+semester A, B, and C section students.
+
+MariaDB [college]> SELECT STUDENT.USN, STUDENT.SName,
+    -> CASE
+    ->     WHEN IAMARKS.FinalIA BETWEEN 17 AND 20 THEN 'Outstanding'
+    ->     WHEN IAMARKS.FinalIA BETWEEN 12 AND 16 THEN 'Average'
+    ->     WHEN IAMARKS.FinalIA < 12 THEN 'Weak'
+    -> END AS CAT
+    -> FROM STUDENT
+    -> JOIN CLASS ON STUDENT.USN = CLASS.USN
+    -> JOIN SEMSEC ON CLASS.SSID = SEMSEC.SSID
+    -> JOIN IAMARKS ON STUDENT.USN = IAMARKS.USN
+    -> WHERE SEMSEC.Sem = 8 AND SEMSEC.Sec IN ('A', 'B', 'C');
++------------+--------+-------------+
+| USN        | SName  | CAT         |
++------------+--------+-------------+
+| 1BI15CS102 | Emma   | Average     |
+| 1BI15CS103 | David  | Weak        |
+| 1BI15CS104 | Olivia | Outstanding |
++------------+--------+-------------+
+3 rows in set (0.002 sec)

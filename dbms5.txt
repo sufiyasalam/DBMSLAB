@@ -1,0 +1,237 @@
+MariaDB [(none)]> create database COMPANY;
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [(none)]> use COMPANY;
+Database changed
+MariaDB [COMPANY]> CREATE TABLE EMPLOYEE (
+    ->     SSN INT PRIMARY KEY,
+    ->     Name VARCHAR(100),
+    ->     Address VARCHAR(100),
+    ->     Sex CHAR(1),
+    ->     Salary DECIMAL(10, 2),
+    ->     SuperSSN INT,
+    ->     DNo INT
+    -> );
+Query OK, 0 rows affected (0.015 sec)
+
+MariaDB [COMPANY]> CREATE TABLE DEPARTMENT (
+    ->     DNo INT PRIMARY KEY,
+    ->     DName VARCHAR(50),
+    ->     MgrSSN INT,
+    ->     MgrStartDate DATE
+    -> );
+Query OK, 0 rows affected (0.015 sec)
+
+MariaDB [COMPANY]> CREATE TABLE DLOCATION (
+    ->     DNo INT PRIMARY KEY,
+    ->     DLoc VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [COMPANY]> CREATE TABLE PROJECT (
+    ->     PNo INT PRIMARY KEY,
+    ->     PName VARCHAR(50),
+    ->     PLocation VARCHAR(50),
+    ->     DNo INT
+    -> );
+Query OK, 0 rows affected (0.021 sec)
+
+MariaDB [COMPANY]> CREATE TABLE WORKS_ON (
+    ->     SSN INT,
+    ->     PNo INT,
+    ->     Hours INT,
+    ->     PRIMARY KEY (SSN, PNo)
+    -> );
+Query OK, 0 rows affected (0.009 sec)
+
+MariaDB [COMPANY]> desc EMPLOYEE;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| SSN      | int(11)       | NO   | PRI | NULL    |       |
+| Name     | varchar(100)  | YES  |     | NULL    |       |
+| Address  | varchar(100)  | YES  |     | NULL    |       |
+| Sex      | char(1)       | YES  |     | NULL    |       |
+| Salary   | decimal(10,2) | YES  |     | NULL    |       |
+| SuperSSN | int(11)       | YES  |     | NULL    |       |
+| DNo      | int(11)       | YES  |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+7 rows in set (0.034 sec)
+
+MariaDB [COMPANY]> desc DEPARTMENT;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| DNo          | int(11)     | NO   | PRI | NULL    |       |
+| DName        | varchar(50) | YES  |     | NULL    |       |
+| MgrSSN       | int(11)     | YES  |     | NULL    |       |
+| MgrStartDate | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+4 rows in set (0.038 sec)
+
+MariaDB [COMPANY]> desc DLOCATION;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| DNo   | int(11)     | NO   | PRI | NULL    |       |
+| DLoc  | varchar(50) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.038 sec)
+
+MariaDB [COMPANY]> desc PROJECT;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| PNo       | int(11)     | NO   | PRI | NULL    |       |
+| PName     | varchar(50) | YES  |     | NULL    |       |
+| PLocation | varchar(50) | YES  |     | NULL    |       |
+| DNo       | int(11)     | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.040 sec)
+
+MariaDB [COMPANY]> desc WORKS_ON;
++-------+---------+------+-----+---------+-------+
+| Field | Type    | Null | Key | Default | Extra |
++-------+---------+------+-----+---------+-------+
+| SSN   | int(11) | NO   | PRI | NULL    |       |
+| PNo   | int(11) | NO   | PRI | NULL    |       |
+| Hours | int(11) | YES  |     | NULL    |       |
++-------+---------+------+-----+---------+-------+
+3 rows in set (0.021 sec)
+
+MariaDB [COMPANY]> select * from EMPLOYEE;
++-----+-------+----------+------+-----------+----------+------+
+| SSN | Name  | Address  | Sex  | Salary    | SuperSSN | DNo  |
++-----+-------+----------+------+-----------+----------+------+
+|   1 | Scott | Mysore   | M    | 500000.00 |     NULL |    1 |
+|   2 | John  | Banglore | M    | 700000.00 |        1 |    1 |
+|   3 | Jane  | Mandya   | F    | 800000.00 |        1 |    2 |
+|   4 | Doe   | RamNagar | M    | 600000.00 |        2 |    2 |
++-----+-------+----------+------+-----------+----------+------+
+4 rows in set (0.001 sec)
+
+MariaDB [COMPANY]> select * from DEPARTMENT;
++-----+----------+--------+--------------+
+| DNo | DName    | MgrSSN | MgrStartDate |
++-----+----------+--------+--------------+
+|   1 | IoT      |      1 | 2024-01-01   |
+|   2 | Accounts |      2 | 2024-01-02   |
++-----+----------+--------+--------------+
+2 rows in set (0.001 sec)
+
+MariaDB [COMPANY]> select * from DLOCATION;
++-----+----------+
+| DNo | DLoc     |
++-----+----------+
+|   1 | Mysore   |
+|   2 | Banglore |
++-----+----------+
+2 rows in set (0.001 sec)
+
+MariaDB [COMPANY]> select * from PROJECT;
++-----+-------------+-----------+------+
+| PNo | PName       | PLocation | DNo  |
++-----+-------------+-----------+------+
+|   1 | SmartMirror | Mysore    |    1 |
+|   2 | StockMarket | Banglore  |    2 |
++-----+-------------+-----------+------+
+2 rows in set (0.001 sec)
+
+MariaDB [COMPANY]> select * from WORKS_ON;
++-----+-----+-------+
+| SSN | PNo | Hours |
++-----+-----+-------+
+|   1 |   1 |    40 |
+|   2 |   1 |    40 |
+|   3 |   2 |    40 |
+|   4 |   2 |    40 |
++-----+-----+-------+
+4 rows in set (0.001 sec)
+
+QUERY 1:List of all project numbers for projects that involve an employee whose last name is ‘Scott’, either as a worker or as a manager of the department that controls the project.
+
+MariaDB [COMPANY]> SELECT PNo
+    -> FROM PROJECT
+    -> WHERE DNo IN (
+    ->     SELECT DNo
+    ->     FROM EMPLOYEE
+    ->     WHERE Name LIKE '%Scott%'
+    -> ) OR PNo IN (
+    ->     SELECT PNo
+    ->     FROM WORKS_ON
+    ->     WHERE SSN IN (
+    ->         SELECT SSN
+    ->         FROM EMPLOYEE
+    ->         WHERE Name LIKE '%Scott%'
+    ->     ));
++-----+
+| PNo |
++-----+
+|   1 |
++-----+
+1 row in set (0.002 sec)
+
+QUERY 2: Resulting salaries if every employee working on the ‘IoT’ project is given a 10 percent raise.
+
+MariaDB [COMPANY]> SELECT SSN, Salary * 1.1 AS 'Updated Salary'
+    -> FROM EMPLOYEE
+    -> WHERE SSN IN (
+    ->     SELECT SSN
+    ->     FROM WORKS_ON
+    ->     WHERE PNo IN (
+    ->         SELECT PNo
+    ->         FROM PROJECT
+    ->         WHERE PName = 'IoT'
+    ->     )
+    -> );
+Empty set (0.001 sec)
+
+QUERY 3:Sum, maximum, minimum, and average of the salaries of all employees of the ‘Accounts’ department.
+
+MariaDB [COMPANY]> SELECT SUM(Salary) AS 'Total Salary', MAX(Salary) AS 'Max Salary', MIN(Salary) AS 'Min Salary', AVG(Salary) AS 'Average Salary'
+    -> FROM EMPLOYEE
+    -> WHERE DNo IN (
+    ->     SELECT DNo
+    ->     FROM DEPARTMENT
+    ->     WHERE DName = 'Accounts'
+    -> );
++--------------+------------+------------+----------------+
+| Total Salary | Max Salary | Min Salary | Average Salary |
++--------------+------------+------------+----------------+
+|   1400000.00 |  800000.00 |  600000.00 |  700000.000000 |
++--------------+------------+------------+----------------+
+1 row in set (0.001 sec)
+
+QUERY 4: Name of each employee who works on all the projects controlled by department number 5.
+
+MariaDB [COMPANY]> SELECT Name
+    -> FROM EMPLOYEE
+    -> WHERE NOT EXISTS (
+    ->     SELECT PNo
+    ->     FROM PROJECT
+    ->     WHERE DNo = 5 AND PNo NOT IN (
+    ->         SELECT PNo
+    ->         FROM WORKS_ON
+    ->         WHERE SSN = EMPLOYEE.SSN
+    ->     )
+    -> );
++-------+
+| Name  |
++-------+
+| Scott |
+| John  |
+| Jane  |
+| Doe   |
++-------+
+4 rows in set (0.001 sec)
+
+QUERY 5:For each department that has more than five employees, retrieve the department number and the number of its employees who are making more than Rs. 6,00,000.
+
+MariaDB [COMPANY]> SELECT DNo, COUNT(SSN) AS 'Number of Employees'
+    -> FROM EMPLOYEE
+    -> WHERE Salary > 600000
+    -> GROUP BY DNo
+    -> HAVING COUNT(SSN) > 5;
+Empty set (0.001 sec)
+
+
